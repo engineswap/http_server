@@ -44,13 +44,16 @@ void TcpServer::openSocket(){
 
 void TcpServer::startListen(){
     cout << "Listening for connections\n";
-    listen(m_socket, 5);
 
-    int clientSocket = accept(m_socket, nullptr, nullptr);
+    while(true){
+        listen(m_socket, 5);
 
-    char buffer[1024] = {};
-    recv(clientSocket, buffer, 1024, 0);
-    std::cout << "Recieved request:\n" << buffer << "\n"; 
+        int clientSocket = accept(m_socket, nullptr, nullptr);
+
+        char buffer[1024] = {};
+        recv(clientSocket, buffer, 1024, 0);
+        std::cout << "Recieved request:\n" << buffer << "\n"; 
+    }
 }
 
 

@@ -1,3 +1,3 @@
-Following this blog post:
+http server in c++
 
-https://osasazamegbe.medium.com/showing-building-an-http-server-from-scratch-in-c-2da7c0db6cb7
+very performant
