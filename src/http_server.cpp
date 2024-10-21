@@ -9,8 +9,11 @@
 #include <stdexcept>
 #include <fstream>
 #include <boost/beast.hpp> // for parsing http requests
+#include <thread>
 
 using std::cout;
+namespace beast = boost::beast;   
+namespace http = beast::http;     
 
 TcpServer::TcpServer(std::string ip, int port)
     :m_ip{ip}, m_port{port} {
@@ -45,13 +48,11 @@ void TcpServer::openSocket(){
     cout << "Created socket on " << m_ip << ":" << m_port << "\n";
 }
 
-void TcpServer::handleRequest(){
-    namespace beast = boost::beast;   
-    namespace http = beast::http;     
-    cout << "Handling request " << m_req.target() << std::endl;
+void TcpServer::handleRequest(const http::request<http::string_body> &req, int clientSocket){
+    sleep(5);
 
-    if (m_req.method() == http::verb::get){
-        std::string file_path = std::string("./resources")+std::string(m_req.target());
+    if (req.method() == http::verb::get){
+        std::string file_path = std::string("./resources")+std::string(req.target());
         cout << file_path << "\n";
         std::ifstream file(file_path);
 
@@ -62,7 +63,7 @@ void TcpServer::handleRequest(){
                        "Content-Type: text/html\r\n"
                        "\r\n"
                        "<html><body><h1>404 Not Found</h1><p>Resource not found.</p></body></html>"; 
-            send(m_clientSocket, response.c_str(), response.length(), 0);
+            send(clientSocket, response.c_str(), response.length(), 0);
             return;
         }
         
@@ -76,20 +77,19 @@ void TcpServer::handleRequest(){
 
         response += file_content;
             
-        send(m_clientSocket, response.c_str(), response.length(), 0);
+        send(clientSocket, response.c_str(), response.length(), 0);
+        cout << "Sent 200 OK" << std::endl;
         return;
     } else{
         // 501 We dont support non-get requests
         std::string response = "HTTP/1.1 501 Not Implemented\r\nContent-Type: text/html\r\n\r\n<html><body><h1>501 Not Implemented</h1></body></html>";
-        send(m_clientSocket, response.c_str(), response.length(), 0);
+        send(clientSocket, response.c_str(), response.length(), 0);
+        cout << "Sent 501 Not Implemented" << std::endl;
         return;
     }
 }
 
-void TcpServer::parseRequest(const char(&buffer)[1024]) {
-    namespace beast = boost::beast;   
-    namespace http = beast::http;     
-
+void TcpServer::parseRequest(const char(&buffer)[1024], int clientSocket) {
     // Get our char[] into a flat buffer
     beast::flat_buffer flatBuffer;
     size_t buffLen = std::strlen(buffer);
@@ -115,6 +115,7 @@ void TcpServer::parseRequest(const char(&buffer)[1024]) {
     parser.put(flatBuffer.data(), ec);
 
     if (ec){
+        // TODO: Send response to client
         std::cerr << "Error with parsing HTTP request:\n" << ec.message()
             << std::endl;
         return;
@@ -122,15 +123,27 @@ void TcpServer::parseRequest(const char(&buffer)[1024]) {
 
     if (parser.is_done()){
         // get the request object
-        m_req = parser.release();
+        http::request<http::string_body> req = parser.release(); 
 
-        cout << "Successfully parsed HTTP " << m_req.method_string()
+        cout << "Successfully parsed HTTP " << req.method_string()
             << " request." << std::endl;
 
-        handleRequest();
+        handleRequest(req, clientSocket);
     }else{
         std::cerr << "Parser couldn't finish parsing request";
     }
+}
+
+void TcpServer::handleClient(int clientSocket){
+    char buffer[1024] = {};
+    recv(clientSocket , buffer, 1024, 0);
+    std::cout << "Recieved request" << std::endl; 
+
+    // Parse http request with boost beast
+    parseRequest(buffer, clientSocket);
+
+    // Close socket
+    close(clientSocket );
 }
 
 void TcpServer::startListen(){
@@ -139,23 +152,19 @@ void TcpServer::startListen(){
     while(true){
         listen(m_socket, 5);
 
-        m_clientSocket = accept(m_socket, nullptr, nullptr);
+        int clientSocket = accept(m_socket, nullptr, nullptr);
 
-        char buffer[1024] = {};
-        recv(m_clientSocket , buffer, 1024, 0);
-        std::cout << "Recieved request:\n" << buffer << std::endl; 
+        // Send each clientSocket to a seaparate thread 
+        std::thread connection_thread (&TcpServer::handleClient, this, clientSocket);
 
-        // Parse http request with boost beast
-        parseRequest(buffer);
-
-        // Close socket
-        close(m_clientSocket );
+        // Let thread run independently 
+        connection_thread.detach(); 
     }
 }
 
 
 void TcpServer::closeSocket(){
     close(m_socket);
-    close(m_clientSocket);
+    // close(m_clientSocket); // cant access this anymore 
     cout << "Closed socket";
 }
