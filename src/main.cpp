@@ -1,8 +1,6 @@
 #include "../include/http_server.h"
-#include <iostream>
 #include <memory>
 
-// using std::cout;
 using std::unique_ptr;
 
 unique_ptr<TcpServer> server_ptr;

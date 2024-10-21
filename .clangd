@@ -1,0 +1,3 @@
+# .clangd
+CompileFlags:
+  Add: [-I/usr/local/opt/boost/include]
