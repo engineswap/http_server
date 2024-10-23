@@ -1,12 +1,129 @@
+
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Welcome webserver</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="css/style.css" rel="stylesheet">
-    </head>
-    <body>
-        This is my website!
-    </body>
+
+<head>
+    <title>Rad HTTP Server</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: #00FF00;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            animation: bg-flash 3s infinite alternate;
+        }
+
+        @keyframes bg-flash {
+            0% {
+                background-color: #000;
+            }
+
+            100% {
+                background-color: #111;
+            }
+        }
+
+        h1 {
+            font-size: 4em;
+            color: #ff69b4;
+            text-shadow: 2px 2px 0 #fff, 4px 4px 0 #ff69b4;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .content {
+            margin-top: 50px;
+            font-size: 1.5em;
+            background-color: #333;
+            padding: 20px;
+            border: 3px solid #00FF00;
+            display: inline-block;
+            animation: slide-in 2s ease-out;
+        }
+
+        @keyframes slide-in {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .rainbow {
+            animation: rainbow-text 5s infinite linear;
+        }
+
+        @keyframes rainbow-text {
+            0% {
+                color: #FF0000;
+            }
+
+            16% {
+                color: #FF7F00;
+            }
+
+            32% {
+                color: #FFFF00;
+            }
+
+            48% {
+                color: #00FF00;
+            }
+
+            64% {
+                color: #0000FF;
+            }
+
+            80% {
+                color: #4B0082;
+            }
+
+            100% {
+                color: #8B00FF;
+            }
+        }
+
+        .neon {
+            color: #ff69b4;
+            text-shadow: 0 0 5px #ff69b4, 0 0 10px #ff69b4, 0 0 15px #ff69b4;
+        }
+    </style>
+</head>
+
+<body>
+    <h1 class="neon">Welcome to My Totally Rad HTTP Server!</h1>
+
+    <div class="content">
+        <p><span class="rainbow">Get ready to experience</span> the <strong>power</strong> of a multithreaded HTTP server like it's 1999!</p>
+        <p>Serving static files faster than you can say "Y2K bug"!</p>
+        <p>Feel the nostalgia of the web in the 90s with all the HTTP requests your heart desires!</p>
+        <p>Just be careful with those POST requests... We don't support those yet! 😎</p>
+        <p class="rainbow">Serving you with pride from port 8080! 🌐</p>
+    </div>
+
+    <footer>
+        <p><marquee behavior="scroll" direction="left">🚀 <em>Super fast, super rad, HTTP 1.1 compatible!</em> 🚀</marquee></p>
+    </footer>
+</body>
+
 </html>

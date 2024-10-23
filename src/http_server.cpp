@@ -10,6 +10,7 @@
 #include <fstream>
 #include <boost/beast.hpp> // for parsing http requests
 #include <thread>
+#include <queue> 
 
 using std::cout;
 namespace beast = boost::beast;   
@@ -17,6 +18,7 @@ namespace http = beast::http;
 
 TcpServer::TcpServer(std::string ip, int port)
     :m_ip{ip}, m_port{port} {
+
     openSocket();
 }
 
@@ -49,8 +51,6 @@ void TcpServer::openSocket(){
 }
 
 void TcpServer::handleRequest(const http::request<http::string_body> &req, int clientSocket){
-    sleep(5);
-
     if (req.method() == http::verb::get){
         std::string file_path = std::string("./resources")+std::string(req.target());
         cout << file_path << "\n";
@@ -143,22 +143,59 @@ void TcpServer::handleClient(int clientSocket){
     parseRequest(buffer, clientSocket);
 
     // Close socket
-    close(clientSocket );
+    close(clientSocket);
 }
 
+// worker threads
+void TcpServer::worker(int thread_id){
+    while(true){
+        int clientSocket;
+
+        {
+            std::unique_lock<std::mutex> lock(m_queue_mutex);
+
+            m_queue_cond_var.wait(lock, [this](){ return !m_task_queue.empty(); });
+
+            // wake up sunshine, theres a client request
+            cout << "[" << thread_id << "] Woke up\n";
+            clientSocket = m_task_queue.front();
+            m_task_queue.pop();
+        }
+        // Lock released here
+        handleClient(clientSocket);
+    }
+}
+
+// main thread
 void TcpServer::startListen(){
     cout << "Listening for connections\n";
+    listen(m_socket, 50);
+
+    // Start our workers
+    std::vector<std::thread> threads;
+    for(int i=0; i<m_thread_count; i++){
+        threads.emplace_back(&TcpServer::worker, this, i);
+        cout << "Created worker " << i << std::endl;
+    }
 
     while(true){
-        listen(m_socket, 5);
-
+        // Blocks until a connection
         int clientSocket = accept(m_socket, nullptr, nullptr);
+        
+        {
+            // Aquire lock
+            std::unique_lock<std::mutex> lock(m_queue_mutex);
+            // add task to task queue
+            m_task_queue.push(clientSocket);
+        }
+        // mutex released here
+        
+        // notify workers
+        m_queue_cond_var.notify_one(); 
+    }
 
-        // Send each clientSocket to a seaparate thread 
-        std::thread connection_thread (&TcpServer::handleClient, this, clientSocket);
-
-        // Let thread run independently 
-        connection_thread.detach(); 
+    for (auto& worker : threads){
+        worker.join();
     }
 }
 
