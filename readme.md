@@ -15,8 +15,8 @@ This C++ project implements a simple multithreaded HTTP server using Boost Beast
 ***
 ## Demo Video
 
-You can watch a demo of the project in action [here](https://www.youtube.com/watch?v=YOUR_DEMO_LINK).
-[![Demo video](https://img.youtube.com/vi/YOUR_DEMO_LINK/0.jpg)](https://www.youtube.com/watch?v=YOUR_DEMO_LINK)
+You can watch a demo of the project in action [here](https://youtu.be/YXX-MhWeLUQ?si=nVe54Ex5dtQ4B0ZB).
+[![Demo video](https://i.ytimg.com/vi/YXX-MhWeLUQ/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCNO8NovNRc6_VSZry5hc5APfimbQ)](https://youtu.be/YXX-MhWeLUQ?si=nVe54Ex5dtQ4B0ZB)
 ***
 
 ## Design
