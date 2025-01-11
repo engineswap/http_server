@@ -41,12 +41,17 @@ To compile and run the program, follow these steps:
     cd cpp-http-server
     ```
 3. **Ensure Boost is installed on your system.** If not, install it using your package manager. For example, on Ubuntu:
-    ```bash
-    sudo apt-get install libboost-all-dev
+    ```
+    brew install boost
+    ```
+
+4. **Make the build files**
+    ```
+    cd build && cmake ..
     ```
 4. **Compile the program:**
-    ```bash
-    make
+    ```
+    make 
     ```
 5. **Run the server:**
     ```bash
