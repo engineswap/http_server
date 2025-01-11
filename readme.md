@@ -2,7 +2,10 @@
 
 This C++ project implements a simple multithreaded HTTP server using Boost Beast. The server listens for incoming HTTP connections, processes GET requests, and serves static files from a specified directory. The server efficiently handles multiple clients using a thread pool, ensuring better concurrency and performance.
 
-![Screenshot](./screenshots/header.png)
+You can watch a demo of the project in action [here](https://youtu.be/YXX-MhWeLUQ?si=nVe54Ex5dtQ4B0ZB).
+
+[![Demo video](https://i.ytimg.com/vi/YXX-MhWeLUQ/hqdefault.jpg?sqp=-oaymwEcCNACELwBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCNO8NovNRc6_VSZry5hc5APfimbQ)](https://youtu.be/YXX-MhWeLUQ?si=nVe54Ex5dtQ4B0ZB)
+
 ***
 
 ## Features 🚀
@@ -11,13 +14,6 @@ This C++ project implements a simple multithreaded HTTP server using Boost Beast
 * 🧩 **Modular Codebase**: Clean and separated code for easy maintenance.
 * ⚡ **High Performance**: Handles 500-1000 RPS (Requests Per Second).
 * 🔓 **Safety Third**: Who needs firewalls? This server exposes your whole computer to the internet💀
-
-***
-## Demo Video
-
-You can watch a demo of the project in action [here](https://www.youtube.com/watch?v=YOUR_DEMO_LINK).
-[![Demo video](https://img.youtube.com/vi/YOUR_DEMO_LINK/0.jpg)](https://www.youtube.com/watch?v=YOUR_DEMO_LINK)
-***
 
 ## Design
 
